@@ -2,6 +2,13 @@ import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import '../App.css';
 
+const ClientOnly = ({ children }) => {
+  const [hasMounted, setHasMounted] = useState(false);
+  useEffect(() => { setHasMounted(true); }, []);
+  if (!hasMounted) return null;
+  return <>{children}</>;
+};
+
 // ❄️ KAR TANELERİ BİLEŞENİ
 const Snowflakes = React.memo(() => {
   // Hydration hatasını engellemek için mount kontrolü
@@ -52,7 +59,7 @@ const SnowAccumulation = React.memo(() => {
       width: 10 + Math.random() * 15,
       height: 17 + Math.random() * 40,
       left: (i * 8) - 10 + (Math.random() * 10),
-      borderTopLeftRadius: `${60 + Math.random() * 40}%`, 
+      borderTopLeftRadius: `${60 + Math.random() * 40}%`,
       borderTopRightRadius: `${60 + Math.random() * 40}%`,
       opacity: 0.7 + Math.random() * 0.2,
     }));
@@ -129,10 +136,10 @@ const Layer1 = ({ onUnlock }) => {
   };
 
   return (
-    <div 
+    <div
       className="min-h-screen w-full flex items-center justify-center overflow-hidden"
       onMouseMove={handleGlobalMouseMove}
-      style={{ 
+      style={{
         background: 'radial-gradient(circle at center, #3d0202 0%, #000 100%)',
         position: 'relative',
         cursor: 'default'
@@ -158,13 +165,15 @@ const Layer1 = ({ onUnlock }) => {
         ))}
       </AnimatePresence>
 
-      <Snowflakes />
-      <SnowAccumulation />
+      <ClientOnly>
+        <Snowflakes />
+        <SnowAccumulation />
+      </ClientOnly>
 
       {isStarted && (
         <motion.div
-          initial={{ x: '-30vw', y: '80vh', rotate: -15 }} 
-          animate={{ x: '120vw', y: '10vh', rotate: -5 }} 
+          initial={{ x: '-30vw', y: '80vh', rotate: -15 }}
+          animate={{ x: '120vw', y: '10vh', rotate: -5 }}
           transition={{ duration: 22, repeat: Infinity, ease: "linear" }}
           style={{ position: 'fixed', zIndex: 1, pointerEvents: 'none', opacity: 0.5 }}
         >
@@ -186,7 +195,7 @@ const Layer1 = ({ onUnlock }) => {
         ) : (
           <motion.div
             key="card"
-            initial={{ y: 50, opacity: 0 }} 
+            initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
@@ -202,16 +211,16 @@ const Layer1 = ({ onUnlock }) => {
               animate={{ opacity: isHovered ? 0 : 1 }}
               transition={{ duration: 1 }}
               style={{
-                position: 'absolute', inset: 0, 
+                position: 'absolute', inset: 0,
                 backgroundColor: 'rgba(255, 255, 255, 0.15)',
                 backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)',
                 borderRadius: '35px', zIndex: 100, pointerEvents: 'none',
                 display: 'flex', alignItems: 'center', justifyContent: 'center'
               }}
             >
-               <span style={{ color: 'white', opacity: 0.9, fontSize: '15px', fontWeight: 'bold' }}>
-                 Buğuyu silmek için dokun... ❄️
-               </span>
+              <span style={{ color: 'white', opacity: 0.9, fontSize: '15px', fontWeight: 'bold' }}>
+                Buğuyu silmek için dokun... ❄️
+              </span>
             </motion.div>
 
             <div style={{ position: 'absolute', top: '-15px', left: '-15px', fontSize: '55px' }}>🌿</div>
@@ -224,7 +233,7 @@ const Layer1 = ({ onUnlock }) => {
             </motion.div>
 
             <h2 style={{ color: '#D4AF37', fontSize: '28px', marginBottom: '10px' }}>Mutlu ve Senli Yıllar SEVGİLİM...</h2>
-            
+
             <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
               <motion.input
                 type="text" placeholder="Özel şifremiz..." value={password}
@@ -237,7 +246,7 @@ const Layer1 = ({ onUnlock }) => {
                 whileTap={{ scale: 0.95 }}
                 style={{ background: 'linear-gradient(45deg, #D4AF37, #B8860B)', color: '#3d0202', padding: '15px', borderRadius: '15px', fontWeight: 'bold', border: 'none', cursor: 'pointer', fontSize: '16px' }}
               >
-               🌘​ Yılbaşımız Başlasın ​​💌​​🎉​
+                🌘​ Yılbaşımız Başlasın ​​💌​​🎉
               </motion.button>
             </form>
           </motion.div>
