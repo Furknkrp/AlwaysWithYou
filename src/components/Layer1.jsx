@@ -1,17 +1,27 @@
-import React, { useState, useRef, useMemo } from 'react';
+import React, { useState, useRef, useMemo, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import '../App.css';
 
 // ❄️ KAR TANELERİ BİLEŞENİ
 const Snowflakes = React.memo(() => {
-  const flakes = useMemo(() => Array.from({ length: 100 }).map((_, i) => ({
-    id: i,
-    left: `${Math.random() * 100}%`,
-    size: `${Math.random() * 5 + 2}px`,
-    opacity: Math.random() * 0.8 + 0.3,
-    duration: Math.random() * 5 + 5,
-    delay: Math.random() * 10,
-  })), []);
+  // Hydration hatasını engellemek için mount kontrolü
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const flakes = useMemo(() => {
+    // Sadece bileşen mount olduktan sonra (tarayıcıda) kar tanelerini oluşturur
+    if (!mounted) return [];
+    return Array.from({ length: 100 }).map((_, i) => ({
+      id: i,
+      left: `${Math.random() * 100}%`,
+      size: `${Math.random() * 5 + 2}px`,
+      opacity: Math.random() * 0.8 + 0.3,
+      duration: Math.random() * 5 + 5,
+      delay: Math.random() * 10,
+    }));
+  }, [mounted]);
+
+  if (!mounted) return null;
 
   return (
     <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 2 }}>
@@ -31,18 +41,24 @@ const Snowflakes = React.memo(() => {
   );
 });
 
-// 🏔️ EKRAN ALTI KAR BİRİKİNTİLERİ (HAREKET ETMEYEN VE DOĞAL TEPELER)
+// 🏔️ EKRAN ALTI KAR BİRİKİNTİLERİ
 const SnowAccumulation = React.memo(() => {
-  // useMemo kullanarak tepeleri bir kez oluşturuyoruz, böylece render sırasında değişmiyorlar
-  const hills = useMemo(() => Array.from({ length: 12 }).map((_, i) => ({
-    width: 10 + Math.random() * 15, // %20 ile %45 arası genişlik
-    height: 17 + Math.random() * 40, // 30px ile 80px arası yükseklik
-    left: (i * 8) - 10 + (Math.random() * 10), // Ekrana yayılmış pozisyon
-    // Asimetrik borderRadius ile "hafif eğik" ve doğal görünüm:
-    borderTopLeftRadius: `${60 + Math.random() * 40}%`, 
-    borderTopRightRadius: `${60 + Math.random() * 40}%`,
-    opacity: 0.7 + Math.random() * 0.2,
-  })), []);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
+  const hills = useMemo(() => {
+    if (!mounted) return [];
+    return Array.from({ length: 12 }).map((_, i) => ({
+      width: 10 + Math.random() * 15,
+      height: 17 + Math.random() * 40,
+      left: (i * 8) - 10 + (Math.random() * 10),
+      borderTopLeftRadius: `${60 + Math.random() * 40}%`, 
+      borderTopRightRadius: `${60 + Math.random() * 40}%`,
+      opacity: 0.7 + Math.random() * 0.2,
+    }));
+  }, [mounted]);
+
+  if (!mounted) return null;
 
   return (
     <div style={{ position: 'fixed', bottom: -10, left: 0, width: '100%', height: '100px', pointerEvents: 'none', zIndex: 3, display: 'flex', alignItems: 'flex-end', overflow: 'hidden' }}>
@@ -57,7 +73,7 @@ const SnowAccumulation = React.memo(() => {
             left: `${h.left}%`,
             borderTopLeftRadius: h.borderTopLeftRadius,
             borderTopRightRadius: h.borderTopRightRadius,
-            filter: 'blur(12px)', // Yumuşak geçiş için blur artırıldı
+            filter: 'blur(12px)',
             opacity: h.opacity,
             boxShadow: '0 0 20px white',
           }}
@@ -79,7 +95,6 @@ const Layer1 = ({ onUnlock }) => {
   const musicUrl = "/jingle-bells.mp3";
   const santaImage = "/santa-sleigh.png";
 
-  // ✨ SİHİRLİ MOUSE TAKİBİ
   function handleGlobalMouseMove(event) {
     const newPoint = {
       id: Date.now() + Math.random(),
@@ -125,7 +140,6 @@ const Layer1 = ({ onUnlock }) => {
     >
       <audio ref={audioRef} src={musicUrl} loop />
 
-      {/* ✨ SİHİRLİ MOUSE İZİ */}
       <AnimatePresence>
         {trail.map((point) => (
           <motion.div
@@ -147,7 +161,6 @@ const Layer1 = ({ onUnlock }) => {
       <Snowflakes />
       <SnowAccumulation />
 
-      {/* 🎅 UÇAN NOEL BABA */}
       {isStarted && (
         <motion.div
           initial={{ x: '-30vw', y: '80vh', rotate: -15 }} 
@@ -162,12 +175,12 @@ const Layer1 = ({ onUnlock }) => {
       <AnimatePresence mode="wait">
         {!isStarted ? (
           <motion.button
-                      key="start" onClick={startExperience}
-                      initial={{ scale: 0 }} animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
-                      exit={{ scale: 0, opacity: 0 }}
-                      transition={{ repeat: Infinity, duration: 3 }}
-                      style={{ background: 'none', border: 'none', fontSize: '120px', cursor: 'pointer', zIndex: 100, filter: 'drop-shadow(0 0 20px #D4AF37)' }}
-                    >
+            key="start" onClick={startExperience}
+            initial={{ scale: 0 }} animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ repeat: Infinity, duration: 3 }}
+            style={{ background: 'none', border: 'none', fontSize: '120px', cursor: 'pointer', zIndex: 100, filter: 'drop-shadow(0 0 20px #D4AF37)' }}
+          >
             ❄️
           </motion.button>
         ) : (
@@ -185,7 +198,6 @@ const Layer1 = ({ onUnlock }) => {
               textAlign: 'center', width: '400px', position: 'relative', zIndex: 10
             }}
           >
-            {/* ❄️ BUZLANMIŞ CAM TABAKASI */}
             <motion.div
               animate={{ opacity: isHovered ? 0 : 1 }}
               transition={{ duration: 1 }}
@@ -193,7 +205,7 @@ const Layer1 = ({ onUnlock }) => {
                 position: 'absolute', inset: 0, 
                 backgroundColor: 'rgba(255, 255, 255, 0.15)',
                 backdropFilter: 'blur(30px)', WebkitBackdropFilter: 'blur(30px)',
-                borderRadius: '0px', zIndex: 100, pointerEvents: 'none',
+                borderRadius: '35px', zIndex: 100, pointerEvents: 'none',
                 display: 'flex', alignItems: 'center', justifyContent: 'center'
               }}
             >
@@ -202,7 +214,6 @@ const Layer1 = ({ onUnlock }) => {
                </span>
             </motion.div>
 
-            {/* Süslemeler */}
             <div style={{ position: 'absolute', top: '-15px', left: '-15px', fontSize: '55px' }}>🌿</div>
             <div style={{ position: 'absolute', top: '-15px', right: '-15px', fontSize: '55px', transform: 'scaleX(-1)' }}>🌿</div>
 

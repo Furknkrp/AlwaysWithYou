@@ -178,21 +178,25 @@ const ShootingStars = () => {
   );
 };
 
+// TunnelLayer.jsx içinde PhotoCard bileşenini şu şekilde güncelle:
 const PhotoCard = ({ url, position }) => {
-  const texture = useTexture(url);
+  // Texture yüklenirken hata oluşursa beyaz bir kare göstererek çökmesini engelleriz
+  const [texture, setTexture] = useState(null);
+
   useEffect(() => {
-    if (texture) {
-      texture.minFilter = THREE.LinearFilter;
-      texture.generateMipmaps = false;
-    }
-  }, [texture]);
+    const loader = new THREE.TextureLoader();
+    loader.load(
+      url,
+      (tex) => setTexture(tex),
+      undefined,
+      () => console.log(`Resim yüklenemedi: ${url}`)
+    );
+  }, [url]);
+
+  if (!texture) return null;
 
   return (
     <group position={position}>
-      <mesh position={[0, 0, -0.01]}>
-        <planeGeometry args={[2.5, 1.7]} />
-        <meshBasicMaterial color="#ffffff" transparent opacity={0.1} />
-      </mesh>
       <mesh>
         <planeGeometry args={[2.2, 1.4]} />
         <meshBasicMaterial map={texture} side={THREE.DoubleSide} />
