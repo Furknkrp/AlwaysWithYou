@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:ital,wght@0,600;1,600&family=Montserrat:wght@300;500&display=swap');
+
+:root {
+  --love-glow: #ff9a9e;
+  --deep-space: #0f2027;
+}
+
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: radial-gradient(circle at center, #203a43, #2c5364, #0f2027); 
+}
+
+/* KESİN MERKEZLEME ÇÖZÜMÜ */
+#root {
+  display: grid;
+  place-items: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* Arka Plan Efektleri */
+.snow-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 0 15px white;
+}
+
+/* Romantik Kart Tasarımı */
+.glass-panel {
+  background: rgba(20, 30, 48, 0.6); /* Daha koyu, daha dramatik */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.05);
+  border-radius: 30px;
+  padding: 3rem 4rem;
+  text-align: center;
+  position: relative;
+  z-index: 10;
+  max-width: 450px;
+  width: 90%;
+}
+
+/* Yeni Fontlar ve Yazı Stilleri */
+.romantic-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  font-style: italic;
+  background: linear-gradient(to bottom, #fff, #fbc2eb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(251, 194, 235, 0.5);
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-family: 'Montserrat', sans-serif;
+  color: #a6c1ee;
+  font-size: 0.9rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 2rem;
+  opacity: 0.8;
+}
+
+/* Input Alanı */
+.input-love {
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  padding: 10px;
+  font-family: 'Dancing Script', cursive; /* El yazısı gibi */
+  font-size: 1.8rem;
+  width: 80%;
+  text-align: center;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.input-love::placeholder {
+  color: rgba(255, 255, 255, 0.3);
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.8rem;
+  letter-spacing: 2px;
+}
+
+.input-love:focus {
+  border-bottom-color: #fbc2eb;
+  text-shadow: 0 0 10px rgba(251, 194, 235, 0.8);
+}
+
+/* Kalp İçindeki Fotoğraf İçin Maske */
+.heart-mask-container {
+  width: 160px; /* Büyütülmüş kalp */
+  height: 140px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* SVG Maskeleme ile Fotoğraf */
+.heart-shape {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* SVG path kullanarak resmi kalp şeklinde kesiyoruz */
+  clip-path: path("M80,135 C16,88 -6,55 2,30 C9,8 40,-6 80,35 C120,-6 151,8 158,30 C166,55 144,88 80,135 Z");
+  background-color: rgba(255,255,255,0.1);
+}
